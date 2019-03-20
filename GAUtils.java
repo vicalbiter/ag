@@ -16,12 +16,12 @@ public class GAUtils {
     }
     
     // Generate a random population of "n" individuals, each with genome size "size"
-    public Individual[] generatePopulation(int n, int size) {
+    public Population generatePopulation(int n, int size) {
         Individual[] population = new Individual[n];
         for (int i = 0; i < n; i++) {
             population[i] = generateIndividual(size);
         }
-        return population;
+        return new Population(population);
     }
     
     // Get the fitness of an individual, according to the following royal function
@@ -41,7 +41,12 @@ public class GAUtils {
         return fitness;
     }
     
-    public double[] getFitnessOfPopulation(Individual[] population) {
+    public double[] getAccumulatedFitnessesOfPopulation(Population population) {
+        double[] accum = new double[population.length()];
+        int length = population.length();
+        for (int i = 0; i < length; i++) {
+            double current_fitness = getFitnessOfIndividual(population.getIndividual(i));
+        }
         return null;
     }
     
@@ -67,15 +72,15 @@ public class GAUtils {
         return new_individuals;
     }
     
-    public Individual selection(Individual[] population, double[] fitness) {
+    public Individual selection(Individual[] population, double[] fitnesses) {
         double random = Math.random();
         return null;
     }
     
     public static void main(String[] args) {
         GAUtils utils = new GAUtils();
-        Individual[] population = utils.generatePopulation(3, 5);
-        for (Individual s : population) {
+        Population population = utils.generatePopulation(3, 5);
+        for (Individual s : population.getPopulation()) {
             System.out.println(s);
         }
     }
