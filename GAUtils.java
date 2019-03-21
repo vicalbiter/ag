@@ -99,9 +99,25 @@ public class GAUtils {
         return new_individuals;
     }
     
-    public Individual selection(Individual[] population, double[] fitnesses) {
-        double random = Math.random();
-        return null;
+    // Perform a roulette selection between all the individuals, where the probability of an individual to be chosen
+    // is proportional to its fitness
+    public Individual selection(Population population, double[] accum_fitnesses) {
+        Individual[] pop = population.getPopulation();
+        double max_fitness = accum_fitnesses[accum_fitnesses.length - 1];
+        double r = Math.random();
+        double c = r * max_fitness;
+        for (int i = 0; i < accum_fitnesses.length; i++) {
+            if (i == 0) {
+                if (c > 0 && c < accum_fitnesses[0]) { return pop[i]; }
+            }
+            else {
+                if (c > accum_fitnesses[i-1] && c < accum_fitnesses[i]) { return pop[i]; }
+            }
+        }
+        // If the process above didn't terminate, then all the individuals had a fitness of 0, therefore
+        // we return a random individual from the population
+        int c_index = (int) r * pop.length;
+        return pop[c_index];
     }
     
     public static void main(String[] args) {
