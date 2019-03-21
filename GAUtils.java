@@ -1,3 +1,9 @@
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.Collections;
+
 public class GAUtils {
 
     // Generate a random individual of size "size"
@@ -91,7 +97,7 @@ public class GAUtils {
         return probabilities;
     }
     
-    // Perform a one-point cross between two individuals, and return the offspring
+    // Perform a one-point cross between two individuals, and return their offspring
     public Individual[] onePointCrossover(Individual one, Individual two) {
         int size = one.getSize();
         int random = (int)(Math.random()*size);
@@ -129,6 +135,57 @@ public class GAUtils {
             }
         }
         return new Individual(new_individual);
+    }
+    
+    // Perform a HUX crossover between two individuals, and return their offspring
+    public Individual[] huxCrossover(Individual one, Individual two) {
+        Queue<Integer> non_matching_genes = new LinkedList<>();
+        // Identify the non matching alleles between the two parents
+        for (int i = 0; i < one.getSize(); i++) {
+            if (one.getGeneAtIndex(i) != two.getGeneAtIndex(i)) {
+                non_matching_genes.add(i);
+            }
+        }
+        // Shuffle the non matching alleles
+        List<Integer> non_matching_genes_list = new ArrayList<Integer>(non_matching_genes);
+        Collections.shuffle(non_matching_genes_list);
+        String t1 = "";
+        String t2 = "";
+        for (int i : non_matching_genes) {
+            t1 += i + " ";
+        }
+        for (int i : non_matching_genes_list) {
+            t2 += i + " ";
+        }
+        System.out.println(t1);
+        System.out.println(t2);
+        
+        // Pick the first half of the shuffled non_matching_genes_list
+        int[] chosen_nm_alleles = new int[non_matching_genes_list.size()/2];
+        for (int i = 0; i < non_matching_genes_list.size() / 2; i++) {
+            chosen_nm_alleles[i] = non_matching_genes_list.get(i);
+            System.out.println(non_matching_genes_list.get(i));
+        }
+        
+        // Exchange the chosen alleles to create two new individuals
+        // Convert the genome strings into char arrays in order to be able to change specific genes in it 
+        char[] one_array = one.toString().toCharArray();
+        char[] two_array = two.toString().toCharArray();
+        for (int i = 0; i < chosen_nm_alleles.length; i++) {
+            char temp = one_array[chosen_nm_alleles[i]];
+            one_array[chosen_nm_alleles[i]] = two_array[chosen_nm_alleles[i]];
+            two_array[chosen_nm_alleles[i]] = temp;
+        }
+        Individual[] new_individuals = new Individual[2];
+        new_individuals[0] = new Individual(String.valueOf(one_array));
+        new_individuals[1] = new Individual(String.valueOf(two_array));
+        
+        return new_individuals;
+    }
+    
+    // Returns the hamming distance between two individuals
+    public int hamming(Individual one, Individual two) {
+        return 0;
     }
     
     // Perform a roulette selection between all the individuals, where the probability of an individual to be chosen
@@ -174,10 +231,13 @@ public class GAUtils {
     
     public static void main(String[] args) {
         GAUtils utils = new GAUtils();
-        Population population = utils.generatePopulation(3, 5);
+        Population population = utils.generatePopulation(2, 10);
         for (Individual s : population.getPopulation()) {
             System.out.println(s);
         }
+        Individual[] offs = utils.huxCrossover(population.getIndividualAtIndex(0), population.getIndividualAtIndex(1));
+        System.out.println(offs[0]);
+        System.out.println(offs[1]);
     }
     
 }
