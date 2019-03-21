@@ -58,7 +58,7 @@ public class TGA {
         }
         
         // Print out the best individual
-        System.out.println("After " + g + " generations," + " the best individual found was:");
+        System.out.println("After " + g + " generations," + " the best individual that TGA could found was:");
         Individual best = utils.getBestIndividual(population, fitnesses);
         System.out.println(best);
         System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
