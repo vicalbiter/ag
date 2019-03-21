@@ -117,7 +117,7 @@ public class GAUtils {
         // If the process above didn't terminate, then all the individuals had a fitness of 0, therefore
         // we return a random individual from the population
         int c_index = (int) (r * pop.length);
-        System.out.println(r + " " + c_index);
+        //System.out.println(r + " " + c_index);
         return pop[c_index];
     }
     
