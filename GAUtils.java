@@ -113,6 +113,24 @@ public class GAUtils {
         return new_individuals;
     }
     
+    // Create a new individual using the STA method
+    public Individual statisticCrossover(double[] probabilities, double pc) {
+        String new_individual = "";
+        for (int i = 0; i < probabilities.length; i++) {
+            double pj = Math.random();
+            double pk = Math.random();
+            if (pj > pc) {
+                if (pk > probabilities[i]) { new_individual += "0"; }
+                else { new_individual += "1"; }
+            }
+            else {
+                if (pk <= probabilities[i]) { new_individual += "0"; }
+                else { new_individual += "1"; }
+            }
+        }
+        return new Individual(new_individual);
+    }
+    
     // Perform a roulette selection between all the individuals, where the probability of an individual to be chosen
     // is proportional to its fitness
     public Individual selection(Population population, double[] accum_fitnesses) {

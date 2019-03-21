@@ -18,6 +18,13 @@ public class TestGAUtils {
         System.out.println(new_individuals[1]);   
     }
     
+    public void statisticCrossover(double[] probabilities, double pc) {
+        Individual new_individual = this.utils.statisticCrossover(probabilities, pc);
+        System.out.println("Statistic crossover-generated individual:");
+        System.out.println(new_individual);
+        System.out.println("Fitness : " + this.utils.getFitnessOfIndividual(new_individual));
+    }
+    
     public void getFitnessOfIndividual(Individual ind) {
         System.out.println(ind);
         System.out.println(this.utils.getFitnessOfIndividual(ind));
@@ -71,6 +78,7 @@ public class TestGAUtils {
         double[] fitnesses = test_utils.utils.getFitnessesOfPopulation(population);
         double[] accum_fitnesses = test_utils.utils.getAccumulatedFitnesses(fitnesses);
         double[] rel_fitnesses = test_utils.utils.getRelativeFitnesses(fitnesses, accum_fitnesses[accum_fitnesses.length - 1]);
+        double[] probabilities = test_utils.utils.getGenomeProbabilities(population, rel_fitnesses);
         
         // Test the onePointCrossover function
         //test_utils.onePointCrossover(16);
@@ -88,5 +96,8 @@ public class TestGAUtils {
         
         // Test the getGenomeProbabilities function
         test_utils.getGenomeProbabilities(population, rel_fitnesses);
+        
+        // Test the statisticCrossover function
+        test_utils.statisticCrossover(probabilities, 0.05);
     }
 }
