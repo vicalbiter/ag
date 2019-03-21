@@ -37,6 +37,13 @@ public class TestGAUtils {
         System.out.println("Fitness : " + this.utils.getFitnessOfIndividual(chosen));
     }
     
+    public void getBestIndividual(Population population, double[] fitnesses) {
+        Individual chosen = this.utils.getBestIndividual(population, fitnesses);
+        System.out.println("");
+        System.out.println("Best individual: " + chosen);
+        System.out.println("Fitness : " + this.utils.getFitnessOfIndividual(chosen));
+    }
+    
     public Individual generateTestIndividual(String seed) {
         String test = "";
         for (int i = 0; i < 8; i ++) {
@@ -48,7 +55,7 @@ public class TestGAUtils {
     
     public static void main(String[] args) {
         TestGAUtils test_utils = new TestGAUtils(new GAUtils());
-        Population population = test_utils.utils.generatePopulation(70, 64);
+        Population population = test_utils.utils.generatePopulation(5, 64);
         double[] fitnesses = test_utils.utils.getFitnessesOfPopulation(population);
         double[] accum_fitnesses = test_utils.utils.getAccumulatedFitnesses(fitnesses);
         
@@ -60,8 +67,10 @@ public class TestGAUtils {
         // Test the fitness-related functions
         test_utils.getFitnessesOfPopulation(population);
 
-        // Test the selection function
+        // Test the selection (roulette) function
         test_utils.selection(population, accum_fitnesses);
         
+        // Test the getBestIndividualFunction
+        test_utils.getBestIndividual(population, fitnesses);
     }
 }

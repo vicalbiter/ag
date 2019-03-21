@@ -116,8 +116,28 @@ public class GAUtils {
         }
         // If the process above didn't terminate, then all the individuals had a fitness of 0, therefore
         // we return a random individual from the population
-        int c_index = (int) r * pop.length;
+        int c_index = (int) (r * pop.length);
+        System.out.println(r + " " + c_index);
         return pop[c_index];
+    }
+    
+    // Get the best individual in a population
+    public Individual getBestIndividual(Population population, double[] fitnesses) {
+        double max_fitness = fitnesses[0];
+        int chosen = 0;
+        for (int i = 0; i < fitnesses.length; i++) {
+            if (max_fitness < fitnesses[i]) {
+                max_fitness = fitnesses[i];
+                chosen = i;
+            }
+        }
+        
+        // If the max fitness in the population is 0, choose an individual randomly
+        if (max_fitness < 0.1) {
+            chosen = (int) (Math.random() * fitnesses.length);
+        }
+        
+        return population.getIndividualAtIndex(chosen);
     }
     
     public static void main(String[] args) {
