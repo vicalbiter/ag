@@ -12,7 +12,7 @@ public class Population {
         return this.length;
     }
     
-    public Individual getIndividual(int index) {
+    public Individual getIndividualAtIndex(int index) {
         return this.population[index];
     }
     

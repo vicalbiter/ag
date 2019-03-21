@@ -41,13 +41,40 @@ public class GAUtils {
         return fitness;
     }
     
-    public double[] getAccumulatedFitnessesOfPopulation(Population population) {
-        double[] accum = new double[population.length()];
+    // Get the fitnesses of all the individuals inside a population
+    public double[] getFitnessesOfPopulation(Population population) {
+        double[] fitnesses = new double[population.length()];
         int length = population.length();
         for (int i = 0; i < length; i++) {
-            double current_fitness = getFitnessOfIndividual(population.getIndividual(i));
+            double current_fitness = getFitnessOfIndividual(population.getIndividualAtIndex(i));
+            fitnesses[i] = current_fitness;
         }
-        return null;
+        return fitnesses;
+    }
+    
+    // Get the accumulated fitnesses of a population
+    public double[] getAccumulatedFitnesses(double[] fitnesses) {
+        int length = fitnesses.length;
+        double[] accum = fitnesses.clone();
+        for (int i = 1; i < length; i++) {
+            accum[i] += accum[i - 1];
+        }
+        return accum;
+    }
+    
+    // Get the probabilities for the "selection roulette", i.e the relative fitnesess of 
+    // every individual with respect to the sum of all the fitnesses in the population
+    public double[] getRelativeFitnesses(double[] fitnesses, double accumulated_fitness) {
+        double[] rel_fitnesses = new double[fitnesses.length];
+        for (int i = 0; i < fitnesses.length; i++) {
+            if (accumulated_fitness > 0.1) {
+                rel_fitnesses[i] = fitnesses[i]/accumulated_fitness;
+            }
+            else {
+                rel_fitnesses[i] = 0.0;
+            }
+        }
+        return rel_fitnesses;
     }
     
     // Perform a one-point cross between two individuals, and return the offspring

@@ -21,6 +21,16 @@ public class TestGAUtils {
         System.out.println(this.utils.getFitnessOfIndividual(ind));
     }
     
+    public void getFitnessesOfPopulation(int n, int size) {
+        Population population = this.utils.generatePopulation(n, size);
+        double[] fitnesses = this.utils.getFitnessesOfPopulation(population);
+        double [] accum = this.utils.getAccumulatedFitnesses(fitnesses);
+        double [] rel_fitnesses = this.utils.getRelativeFitnesses(fitnesses, accum[accum.length - 1]);
+        for (int i = 0; i < population.length(); i++) {
+            System.out.println(population.getIndividualAtIndex(i) + " : " + fitnesses[i] + " : " + accum[i] + " : " + rel_fitnesses[i]);
+        }
+    }
+    
     public Individual generateTestIndividual(String seed) {
         String test = "";
         for (int i = 0; i < 8; i ++) {
@@ -33,7 +43,8 @@ public class TestGAUtils {
     public static void main(String[] args) {
         TestGAUtils test_utils = new TestGAUtils(new GAUtils());
         //test_utils.crossOnePoint(16);
-        Individual ind = test_utils.generateTestIndividual("10010111");
-        test_utils.getFitnessOfIndividual(ind);
+        //Individual ind = test_utils.generateTestIndividual("10010111");
+        //test_utils.getFitnessOfIndividual(ind);
+        test_utils.getFitnessesOfPopulation(70, 64);
     }
 }
