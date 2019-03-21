@@ -4,7 +4,7 @@ import java.util.Queue;
 public class STA {
     
     // Class constructor
-    public STA(int n, int l, int g, double pc) {
+    public STA(int n, int l, int g, double pm) {
         GAUtils utils = new GAUtils();
         Individual[] population_buffer = new Individual[n];
         Queue<Individual> new_population = new LinkedList<>();
@@ -28,7 +28,7 @@ public class STA {
             while (new_population.size() < n) {
                 // Perform a statistic crossover of the current population, given the array of genome probabilities, 
                 // and add the resulting individual to the next generation's population
-                new_population.add(utils.statisticCrossover(probabilities, pc));
+                new_population.add(utils.statisticCrossover(probabilities, pm));
             }
             
             // Make the "new" population the "current" population

@@ -35,14 +35,14 @@ public class TGA {
                     
                     // Mutate the offspring with probability pm, and add the resulting individuals into the
                     // next generation's population
-                    new_population.add(offspring_buffer[0].mutate(pc));
-                    new_population.add(offspring_buffer[1].mutate(pc));
+                    new_population.add(offspring_buffer[0].mutate(pm));
+                    new_population.add(offspring_buffer[1].mutate(pm));
                 }
                 // If r >= pc, mutate the chosen individuals and add the resulting individuals into the next
                 // generation's population
                 else {
-                    new_population.add(one.mutate(pc));
-                    new_population.add(two.mutate(pc));
+                    new_population.add(one.mutate(pm));
+                    new_population.add(two.mutate(pm));
                 }
             }
             
