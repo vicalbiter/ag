@@ -6,15 +6,24 @@ import java.util.Arrays;
 public class CHC {
 
     // Class constructor
-    public CHC(int n, int l, int g) {
+    public CHC(int n, int l, int g, int cat) {
         GAUtils utils = new GAUtils();
         Individual[] population_buffer = new Individual[n];
         Individual[] offspring_buffer = new Individual[2];
         PriorityQueue<CIndividual> pq = new PriorityQueue<CIndividual>(n);
         CIndividual[] cpopulation = new CIndividual[n];
+        int cataclism_counter = 0;
         
         // Initialize the population
         Population population = utils.generatePopulation(n, l);
+        double[] fitnesses = utils.getFitnessesOfPopulation(population);
+        
+        // Store the information about the current and previous generation's best individuals, in order to keep
+        // track of when to perform a "restart" (i.e. a cataclism)
+        Individual temp_individual = utils.getBestIndividual(population, fitnesses);
+        double temp_fitness = utils.getFitnessOfIndividual(temp_individual);
+        CIndividual previous_best = new CIndividual(temp_individual, temp_fitness);
+        CIndividual current_best = new CIndividual(temp_individual, temp_fitness);
         
         // Put the population inside a priority queue of individuals, using the fitness of the individuals to determine
         // their natural order
@@ -71,10 +80,40 @@ public class CHC {
                 population_buffer[k] = cind.ind;
                 k++;
             }
-            population = new Population(population_buffer); 
+            population = new Population(population_buffer);
+            fitnesses = utils.getFitnessesOfPopulation(population);
+            
+            // Keep track of the cataclism counter; reset if the current generation's best individual outperformed the
+            // previous generation's best individual
+            temp_individual = utils.getBestIndividual(population, fitnesses);
+            temp_fitness = utils.getFitnessOfIndividual(temp_individual);
+            current_best = new CIndividual(temp_individual, temp_fitness);
+            if (current_best.fitness > previous_best.fitness) {
+                cataclism_counter = 0;
+                previous_best = new CIndividual(current_best.ind, current_best.fitness);
+            }
+            else {
+                cataclism_counter++;
+                // Perform the cataclism mechanism if the search has stagnated
+                if (cataclism_counter >= cat) {
+                    System.out.println("Cataclism at generation " + i + "!");
+                    pq.clear();
+                    pq.add(current_best);
+                    for (int j = 1; j < population.length(); j++) {
+                        Individual current_individual = current_best.ind.mutate(0.35);
+                        double current_fitness = utils.getFitnessOfIndividual(current_individual);
+                        population_buffer[j] = current_individual;
+                        cpopulation[j] = new CIndividual(current_individual, current_fitness);
+                        pq.add(new CIndividual(current_individual, current_fitness));
+                    }
+                    population = new Population(population_buffer);
+                    cataclism_counter = 0;
+                }
+            }
+            
         }
         
-        double[] fitnesses = utils.getFitnessesOfPopulation(population);
+        fitnesses = utils.getFitnessesOfPopulation(population);
         
         // Print out the best individual
         System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
@@ -84,6 +123,6 @@ public class CHC {
     }
     
     public static void main(String[] args) {
-        CHC chc = new CHC(70, 64, 500);
+        CHC chc = new CHC(70, 64, 500, 100);
     }
 }
