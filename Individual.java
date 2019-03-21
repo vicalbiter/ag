@@ -34,6 +34,10 @@ public class Individual {
         return this.size;
     }
     
+    public int getGeneAtIndex(int index) {
+        return Character.getNumericValue(this.ind.charAt(index));
+    }
+    
     // Override the java toString method in order to be able to print the genome of this Individual
     public String toString() {
         return this.ind;
@@ -44,6 +48,7 @@ public class Individual {
         GAUtils utils = new GAUtils();
         Individual individual = utils.generateIndividual(5);
         System.out.println(individual);
-        System.out.println(individual.mutate(0.2));
+        System.out.println(individual.getGeneAtIndex(2));
+        //System.out.println(individual.mutate(0.2));
     }
 }

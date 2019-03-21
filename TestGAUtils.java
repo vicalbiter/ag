@@ -1,3 +1,5 @@
+import java.text.DecimalFormat;
+
 public class TestGAUtils {
 
     private GAUtils utils;
@@ -6,12 +8,12 @@ public class TestGAUtils {
         this.utils = utils;
     }
     
-    public void crossOnePoint(int size) {
+    public void onePointCrossover(int size) {
         Individual one = this.utils.generateIndividual(size);
         Individual two = this.utils.generateIndividual(size);
         System.out.println(one);
         System.out.println(two);
-        Individual[] new_individuals = this.utils.crossOnePoint(one, two);
+        Individual[] new_individuals = this.utils.onePointCrossover(one, two);
         System.out.println(new_individuals[0]);
         System.out.println(new_individuals[1]);   
     }
@@ -44,6 +46,16 @@ public class TestGAUtils {
         System.out.println("Fitness : " + this.utils.getFitnessOfIndividual(chosen));
     }
     
+    public void getGenomeProbabilities(Population population, double[] rel_fitnesses) {
+        double[] probabilities = this.utils.getGenomeProbabilities(population, rel_fitnesses);
+        DecimalFormat df = new DecimalFormat(".##");
+        String sprobs = "";
+        for (int i = 0; i < probabilities.length; i++) {
+            sprobs += df.format(probabilities[i]) + " ";
+        }
+        System.out.println(sprobs);
+    }
+    
     public Individual generateTestIndividual(String seed) {
         String test = "";
         for (int i = 0; i < 8; i ++) {
@@ -55,12 +67,13 @@ public class TestGAUtils {
     
     public static void main(String[] args) {
         TestGAUtils test_utils = new TestGAUtils(new GAUtils());
-        Population population = test_utils.utils.generatePopulation(5, 64);
+        Population population = test_utils.utils.generatePopulation(70, 64);
         double[] fitnesses = test_utils.utils.getFitnessesOfPopulation(population);
         double[] accum_fitnesses = test_utils.utils.getAccumulatedFitnesses(fitnesses);
+        double[] rel_fitnesses = test_utils.utils.getRelativeFitnesses(fitnesses, accum_fitnesses[accum_fitnesses.length - 1]);
         
-        // Test the crossOnePoint function
-        //test_utils.crossOnePoint(16);
+        // Test the onePointCrossover function
+        //test_utils.onePointCrossover(16);
         //Individual ind = test_utils.generateTestIndividual("10010111");
         //test_utils.getFitnessOfIndividual(ind);
         
@@ -70,7 +83,10 @@ public class TestGAUtils {
         // Test the selection (roulette) function
         test_utils.selection(population, accum_fitnesses);
         
-        // Test the getBestIndividualFunction
+        // Test the getBestIndividual function
         test_utils.getBestIndividual(population, fitnesses);
+        
+        // Test the getGenomeProbabilities function
+        test_utils.getGenomeProbabilities(population, rel_fitnesses);
     }
 }

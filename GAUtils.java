@@ -77,8 +77,22 @@ public class GAUtils {
         return rel_fitnesses;
     }
     
+    // Get the probabilities associated with each bit (gene) of a genome (STA)
+    public double[] getGenomeProbabilities(Population population, double[] relative_fitnesses) {
+        int genome_size = population.getSizeOfIndividuals();
+        int population_size = population.length();
+        double[] probabilities = new double[genome_size];
+        for (int i = 0; i < genome_size; i++) {
+            probabilities[i] = 0;
+            for (int j = 0; j < population_size; j++) {
+                probabilities[i] += (relative_fitnesses[j] * population.getIndividualAtIndex(j).getGeneAtIndex(i));
+            }
+        }
+        return probabilities;
+    }
+    
     // Perform a one-point cross between two individuals, and return the offspring
-    public Individual[] crossOnePoint(Individual one, Individual two) {
+    public Individual[] onePointCrossover(Individual one, Individual two) {
         int size = one.getSize();
         int random = (int)(Math.random()*size);
         String new_one = "";

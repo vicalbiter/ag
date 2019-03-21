@@ -31,7 +31,7 @@ public class TGA {
                 // get their offspring
                 double random = Math.random();
                 if (random < pc) {
-                    offspring_buffer = utils.crossOnePoint(one, two);
+                    offspring_buffer = utils.onePointCrossover(one, two);
                     
                     // Mutate the offspring with probability pm, and add the resulting individuals into the
                     // next generation's population
