@@ -24,8 +24,8 @@ public class TGA {
             // Run the following loop until the next generation has "n" individuals
             while (new_population.size() < n) {
                 // Select two individuals from the current population
-                Individual one = utils.selection(population, accum_fitnesses);
-                Individual two = utils.selection(population, accum_fitnesses);
+                Individual one = utils.rouletteSelection(population, accum_fitnesses);
+                Individual two = utils.rouletteSelection(population, accum_fitnesses);
                 
                 // Get a random number r, and if r < pc, perform a crossover between the chosen individuals and 
                 // get their offspring

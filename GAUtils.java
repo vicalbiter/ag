@@ -133,7 +133,7 @@ public class GAUtils {
     
     // Perform a roulette selection between all the individuals, where the probability of an individual to be chosen
     // is proportional to its fitness
-    public Individual selection(Population population, double[] accum_fitnesses) {
+    public Individual rouletteSelection(Population population, double[] accum_fitnesses) {
         Individual[] pop = population.getPopulation();
         double max_fitness = accum_fitnesses[accum_fitnesses.length - 1];
         double r = Math.random();

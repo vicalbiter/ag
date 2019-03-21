@@ -40,7 +40,7 @@ public class TestGAUtils {
     }
     
     public void selection(Population population, double[] accum_fitnesses) {
-        Individual chosen = this.utils.selection(population, accum_fitnesses);
+        Individual chosen = this.utils.rouletteSelection(population, accum_fitnesses);
         System.out.println("");
         System.out.println("Chosen individual: " + chosen);
         System.out.println("Fitness : " + this.utils.getFitnessOfIndividual(chosen));
