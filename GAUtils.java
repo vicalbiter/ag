@@ -26,9 +26,9 @@ public class GAUtils {
     
     // Get the fitness of an individual, according to the following royal function
     // f(x) = <<Equation given in the first partial exam' specifications>>
-    public int getFitnessOfIndividual(Individual ind) {
+    public double getFitnessOfIndividual(Individual ind) {
         String inds = ind.toString();
-        int fitness = 0;
+        double fitness = 0;
         for (int i = 0; i < 64; i += 8) {
             for (int j = i; j < i + 8; j++) {
                 if (inds.charAt(j) == '1') {
