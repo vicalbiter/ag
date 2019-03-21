@@ -149,22 +149,11 @@ public class GAUtils {
         // Shuffle the non matching alleles
         List<Integer> non_matching_genes_list = new ArrayList<Integer>(non_matching_genes);
         Collections.shuffle(non_matching_genes_list);
-        String t1 = "";
-        String t2 = "";
-        for (int i : non_matching_genes) {
-            t1 += i + " ";
-        }
-        for (int i : non_matching_genes_list) {
-            t2 += i + " ";
-        }
-        System.out.println(t1);
-        System.out.println(t2);
         
         // Pick the first half of the shuffled non_matching_genes_list
         int[] chosen_nm_alleles = new int[non_matching_genes_list.size()/2];
         for (int i = 0; i < non_matching_genes_list.size() / 2; i++) {
             chosen_nm_alleles[i] = non_matching_genes_list.get(i);
-            System.out.println(non_matching_genes_list.get(i));
         }
         
         // Exchange the chosen alleles to create two new individuals
