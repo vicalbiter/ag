@@ -3,6 +3,9 @@ import java.util.Queue;
 
 public class STA {
     
+    private Individual best_individual;
+    private double best_fitness;
+    
     // Class constructor
     public STA(int n, int l, int g, double pm) {
         GAUtils utils = new GAUtils();
@@ -47,10 +50,21 @@ public class STA {
         }
         
         // Print out the best individual
-        System.out.println("After " + g + " generations," + " the best individual that STA could find was:");
+        //System.out.println("After " + g + " generations," + " the best individual that STA could find was:");
         Individual best = utils.getBestIndividual(population, fitnesses);
-        System.out.println(best);
-        System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        //System.out.println(best);
+        //System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        
+        this.best_individual = best;
+        this.best_fitness = utils.getFitnessOfIndividual(best);
+    }
+    
+    public Individual getBestIndividual() {
+        return this.best_individual;
+    }
+    
+    public double getBestFitness() {
+        return this.best_fitness;
     }
     
     public static void main(String[] args) {

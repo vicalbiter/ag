@@ -5,6 +5,9 @@ import java.util.Arrays;
 
 public class CHC {
 
+    private Individual best_individual;
+    private double best_fitness;
+    
     // Class constructor
     public CHC(int n, int l, int g, int cat) {
         GAUtils utils = new GAUtils();
@@ -96,7 +99,7 @@ public class CHC {
                 cataclism_counter++;
                 // Perform the cataclism mechanism if the search has stagnated
                 if (cataclism_counter >= cat) {
-                    System.out.println("Cataclism at generation " + i + "!");
+                    //System.out.println("Cataclism at generation " + i + "!");
                     pq.clear();
                     pq.add(current_best);
                     for (int j = 1; j < population.length(); j++) {
@@ -116,13 +119,24 @@ public class CHC {
         fitnesses = utils.getFitnessesOfPopulation(population);
         
         // Print out the best individual
-        System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
+        //System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
         Individual best = utils.getBestIndividual(population, fitnesses);
-        System.out.println(best);
-        System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        //System.out.println(best);
+        //System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        
+        this.best_individual = best;
+        this.best_fitness = utils.getFitnessOfIndividual(best);
+    }
+    
+    public Individual getBestIndividual() {
+        return this.best_individual;
+    }
+    
+    public double getBestFitness() {
+        return this.best_fitness;
     }
     
     public static void main(String[] args) {
-        CHC chc = new CHC(70, 64, 500, 100);
+        CHC chc = new CHC(70, 64, 500, 50);
     }
 }
