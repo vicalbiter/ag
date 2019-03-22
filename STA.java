@@ -16,7 +16,7 @@ public class STA {
         Population population = utils.generatePopulation(n, l);
         double[] fitnesses = utils.getFitnessesOfPopulation(population);
         double[] accum_fitnesses = utils.getAccumulatedFitnesses(fitnesses);
-        double[] rel_fitnesses = utils.getRelativeFitnesses(fitnesses, accum_fitnesses[accum_fitnesses.length - 1]);
+        double[] rel_fitnesses = utils.getRelativeFitnessesSTA(population, fitnesses, accum_fitnesses);
         
         // Get the probabilities that will be associated to every gene of the current population
         double[] probabilities = utils.getGenomeProbabilities(population, rel_fitnesses);
@@ -43,17 +43,17 @@ public class STA {
             // Get the fitnesses of the individuals in the new population
             fitnesses = utils.getFitnessesOfPopulation(population);
             accum_fitnesses = utils.getAccumulatedFitnesses(fitnesses);
-            rel_fitnesses = utils.getRelativeFitnesses(fitnesses, accum_fitnesses[accum_fitnesses.length - 1]);
+            rel_fitnesses = utils.getRelativeFitnessesSTA(population, fitnesses, accum_fitnesses);
         
             // Get the probabilities that will be associated to every gene of the new population
             probabilities = utils.getGenomeProbabilities(population, rel_fitnesses);
         }
         
         // Print out the best individual
-        //System.out.println("After " + g + " generations," + " the best individual that STA could find was:");
+        System.out.println("After " + g + " generations," + " the best individual that STA could find was:");
         Individual best = utils.getBestIndividual(population, fitnesses);
-        //System.out.println(best);
-        //System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        System.out.println(best);
+        System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
         
         this.best_individual = best;
         this.best_fitness = utils.getFitnessOfIndividual(best);

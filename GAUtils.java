@@ -83,6 +83,24 @@ public class GAUtils {
         return rel_fitnesses;
     }
     
+    // Get the relative fitnesses for STA
+    public double[] getRelativeFitnessesSTA(Population population, double[] fitnesses, double[] accum_fitnesses) {
+        // Get the smoothing factor K
+        double average = accum_fitnesses[accum_fitnesses.length - 1]/population.length();
+        Individual worst_individual = getWorstIndividual(population, fitnesses);
+        double min_fitness = getFitnessOfIndividual(worst_individual);
+        double k = average + min_fitness;
+        
+        // Add the smoothing factor K to the fitness of every individual
+        for (int i = 0; i < population.length(); i++) {
+            fitnesses[i] += k;
+        }
+        accum_fitnesses = getAccumulatedFitnesses(fitnesses);
+        
+        // Get the relative fitnesses of the population
+        return getRelativeFitnesses(fitnesses, accum_fitnesses[accum_fitnesses.length - 1]);   
+    }
+    
     // Get the probabilities associated with each bit (gene) of a genome (STA)
     public double[] getGenomeProbabilities(Population population, double[] relative_fitnesses) {
         int genome_size = population.getSizeOfIndividuals();
@@ -213,6 +231,20 @@ public class GAUtils {
         // If the max fitness in the population is 0, choose an individual randomly
         if (max_fitness < 0.1) {
             chosen = (int) (Math.random() * fitnesses.length);
+        }
+        
+        return population.getIndividualAtIndex(chosen);
+    }
+    
+    // Get the worst individual in a population
+    public Individual getWorstIndividual(Population population, double[] fitnesses) {
+        double min_fitness = fitnesses[0];
+        int chosen = 0;
+        for (int i = 0; i < fitnesses.length; i++) {
+            if (min_fitness > fitnesses[i]) {
+                min_fitness = fitnesses[i];
+                chosen = i;
+            }
         }
         
         return population.getIndividualAtIndex(chosen);
