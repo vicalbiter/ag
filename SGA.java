@@ -13,10 +13,10 @@ public class SGA {
         Individual[] population_buffer = new Individual[n];
         Queue<Individual> new_population = new LinkedList<>();
         
-        // Initialize population and get their fitnesses
+        // Initialize population and get their fitness
         Population population = utils.generatePopulation(n, l);
-        double[] fitnesses = utils.getFitnessesOfPopulation(population);
-        double[] accum_fitnesses = utils.getAccumulatedFitnesses(fitnesses);
+        double[] fitness = utils.getFitnessOfPopulation(population);
+        double[] accum_fitness = utils.getAccumulatedFitness(fitness);
         
         // Run the following loop for each generation of individuals
         for (int i = 0; i < g; i++) {            
@@ -24,8 +24,8 @@ public class SGA {
             // Run the following loop until the next generation has "n" individuals
             while (new_population.size() < n) {
                 // Select two individuals from the current population
-                Individual one = utils.rouletteSelection(population, accum_fitnesses);
-                Individual two = utils.rouletteSelection(population, accum_fitnesses);
+                Individual one = utils.rouletteSelection(population, accum_fitness);
+                Individual two = utils.rouletteSelection(population, accum_fitness);
                 
                 // Get a random number r, and if r < pc, perform a crossover between the chosen individuals and 
                 // get their offspring
@@ -52,16 +52,16 @@ public class SGA {
             }
             population = new Population(population_buffer);
             
-            // Get the fitnesses of the individuals in the new population
-            fitnesses = utils.getFitnessesOfPopulation(population);
-            accum_fitnesses = utils.getAccumulatedFitnesses(fitnesses);
+            // Get the fitness of the individuals in the new population
+            fitness = utils.getFitnessOfPopulation(population);
+            accum_fitness = utils.getAccumulatedFitness(fitness);
         }
         
         // Print out the best individual
-        //System.out.println("After " + g + " generations," + " the best individual that SGA could find was:");
-        Individual best = utils.getBestIndividual(population, fitnesses);
-        //System.out.println(best);
-        //System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        System.out.println("After " + g + " generations," + " the best individual that SGA could find was:");
+        Individual best = utils.getBestIndividual(population, fitness);
+        System.out.println(best);
+        System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
         
         this.best_individual = best;
         this.best_fitness = utils.getFitnessOfIndividual(best);

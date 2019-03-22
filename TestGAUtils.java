@@ -30,31 +30,31 @@ public class TestGAUtils {
         System.out.println(this.utils.getFitnessOfIndividual(ind));
     }
     
-    public void getFitnessesOfPopulation(Population population) {
-        double[] fitnesses = this.utils.getFitnessesOfPopulation(population);
-        double [] accum = this.utils.getAccumulatedFitnesses(fitnesses);
-        double [] rel_fitnesses = this.utils.getRelativeFitnesses(fitnesses, accum[accum.length - 1]);
+    public void getFitnessOfPopulation(Population population) {
+        double[] fitness = this.utils.getFitnessOfPopulation(population);
+        double [] accum = this.utils.getAccumulatedFitness(fitness);
+        double [] rel_fitness = this.utils.getRelativeFitness(fitness, accum[accum.length - 1]);
         for (int i = 0; i < population.length(); i++) {
-            System.out.println(population.getIndividualAtIndex(i) + " : " + fitnesses[i] + " : " + accum[i] + " : " + rel_fitnesses[i]);
+            System.out.println(population.getIndividualAtIndex(i) + " : " + fitness[i] + " : " + accum[i] + " : " + rel_fitness[i]);
         }
     }
     
-    public void selection(Population population, double[] accum_fitnesses) {
-        Individual chosen = this.utils.rouletteSelection(population, accum_fitnesses);
+    public void selection(Population population, double[] accum_fitness) {
+        Individual chosen = this.utils.rouletteSelection(population, accum_fitness);
         System.out.println("");
         System.out.println("Chosen individual: " + chosen);
         System.out.println("Fitness : " + this.utils.getFitnessOfIndividual(chosen));
     }
     
-    public void getBestIndividual(Population population, double[] fitnesses) {
-        Individual chosen = this.utils.getBestIndividual(population, fitnesses);
+    public void getBestIndividual(Population population, double[] fitness) {
+        Individual chosen = this.utils.getBestIndividual(population, fitness);
         System.out.println("");
         System.out.println("Best individual: " + chosen);
         System.out.println("Fitness : " + this.utils.getFitnessOfIndividual(chosen));
     }
     
-    public void getGenomeProbabilities(Population population, double[] rel_fitnesses) {
-        double[] probabilities = this.utils.getGenomeProbabilities(population, rel_fitnesses);
+    public void getGenomeProbabilities(Population population, double[] rel_fitness) {
+        double[] probabilities = this.utils.getGenomeProbabilities(population, rel_fitness);
         DecimalFormat df = new DecimalFormat(".##");
         String sprobs = "";
         for (int i = 0; i < probabilities.length; i++) {
@@ -75,10 +75,10 @@ public class TestGAUtils {
     public static void main(String[] args) {
         TestGAUtils test_utils = new TestGAUtils(new GAUtils());
         Population population = test_utils.utils.generatePopulation(70, 64);
-        double[] fitnesses = test_utils.utils.getFitnessesOfPopulation(population);
-        double[] accum_fitnesses = test_utils.utils.getAccumulatedFitnesses(fitnesses);
-        double[] rel_fitnesses = test_utils.utils.getRelativeFitnesses(fitnesses, accum_fitnesses[accum_fitnesses.length - 1]);
-        double[] probabilities = test_utils.utils.getGenomeProbabilities(population, rel_fitnesses);
+        double[] fitness = test_utils.utils.getFitnessOfPopulation(population);
+        double[] accum_fitness = test_utils.utils.getAccumulatedFitness(fitness);
+        double[] rel_fitness = test_utils.utils.getRelativeFitness(fitness, accum_fitness[accum_fitness.length - 1]);
+        double[] probabilities = test_utils.utils.getGenomeProbabilities(population, rel_fitness);
         
         // Test the onePointCrossover function
         //test_utils.onePointCrossover(16);
@@ -86,16 +86,16 @@ public class TestGAUtils {
         //test_utils.getFitnessOfIndividual(ind);
         
         // Test the fitness-related functions
-        test_utils.getFitnessesOfPopulation(population);
+        test_utils.getFitnessOfPopulation(population);
 
         // Test the selection (roulette) function
-        test_utils.selection(population, accum_fitnesses);
+        test_utils.selection(population, accum_fitness);
         
         // Test the getBestIndividual function
-        test_utils.getBestIndividual(population, fitnesses);
+        test_utils.getBestIndividual(population, fitness);
         
         // Test the getGenomeProbabilities function
-        test_utils.getGenomeProbabilities(population, rel_fitnesses);
+        test_utils.getGenomeProbabilities(population, rel_fitness);
         
         // Test the statisticCrossover function
         test_utils.statisticCrossover(probabilities, 0.05);

@@ -86,13 +86,13 @@ public class EGA {
             population = new Population(population_buffer);
         }
         
-        double[] fitnesses = utils.getFitnessesOfPopulation(population);
+        double[] fitness = utils.getFitnessOfPopulation(population);
         
         // Print out the best individual
-        //System.out.println("After " + g + " generations," + " the best individual that EGA could find was:");
-        Individual best = utils.getBestIndividual(population, fitnesses);
-        //System.out.println(best);
-        //System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        System.out.println("After " + g + " generations," + " the best individual that EGA could find was:");
+        Individual best = utils.getBestIndividual(population, fitness);
+        System.out.println(best);
+        System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
         
         this.best_individual = best;
         this.best_fitness = utils.getFitnessOfIndividual(best);

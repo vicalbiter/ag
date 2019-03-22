@@ -19,11 +19,11 @@ public class CHC {
         
         // Initialize the population
         Population population = utils.generatePopulation(n, l);
-        double[] fitnesses = utils.getFitnessesOfPopulation(population);
+        double[] fitness = utils.getFitnessOfPopulation(population);
         
         // Store the information about the current and previous generation's best individuals, in order to keep
         // track of when to perform a "restart" (i.e. a cataclism)
-        Individual temp_individual = utils.getBestIndividual(population, fitnesses);
+        Individual temp_individual = utils.getBestIndividual(population, fitness);
         double temp_fitness = utils.getFitnessOfIndividual(temp_individual);
         CIndividual previous_best = new CIndividual(temp_individual, temp_fitness);
         CIndividual current_best = new CIndividual(temp_individual, temp_fitness);
@@ -84,11 +84,11 @@ public class CHC {
                 k++;
             }
             population = new Population(population_buffer);
-            fitnesses = utils.getFitnessesOfPopulation(population);
+            fitness = utils.getFitnessOfPopulation(population);
             
             // Keep track of the cataclism counter; reset if the current generation's best individual outperformed the
             // previous generation's best individual
-            temp_individual = utils.getBestIndividual(population, fitnesses);
+            temp_individual = utils.getBestIndividual(population, fitness);
             temp_fitness = utils.getFitnessOfIndividual(temp_individual);
             current_best = new CIndividual(temp_individual, temp_fitness);
             if (current_best.fitness > previous_best.fitness) {
@@ -116,11 +116,11 @@ public class CHC {
             
         }
         
-        fitnesses = utils.getFitnessesOfPopulation(population);
+        fitness = utils.getFitnessOfPopulation(population);
         
         // Print out the best individual
         //System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
-        Individual best = utils.getBestIndividual(population, fitnesses);
+        Individual best = utils.getBestIndividual(population, fitness);
         //System.out.println(best);
         //System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
         

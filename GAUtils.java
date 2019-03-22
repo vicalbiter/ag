@@ -47,21 +47,21 @@ public class GAUtils {
         return fitness;
     }
     
-    // Get the fitnesses of all the individuals inside a population
-    public double[] getFitnessesOfPopulation(Population population) {
-        double[] fitnesses = new double[population.length()];
+    // Get the fitness of all the individuals inside a population
+    public double[] getFitnessOfPopulation(Population population) {
+        double[] fitness = new double[population.length()];
         int length = population.length();
         for (int i = 0; i < length; i++) {
             double current_fitness = getFitnessOfIndividual(population.getIndividualAtIndex(i));
-            fitnesses[i] = current_fitness;
+            fitness[i] = current_fitness;
         }
-        return fitnesses;
+        return fitness;
     }
     
-    // Get the accumulated fitnesses of a population
-    public double[] getAccumulatedFitnesses(double[] fitnesses) {
-        int length = fitnesses.length;
-        double[] accum = fitnesses.clone();
+    // Get the accumulated fitness of a population
+    public double[] getAccumulatedFitness(double[] fitness) {
+        int length = fitness.length;
+        double[] accum = fitness.clone();
         for (int i = 1; i < length; i++) {
             accum[i] += accum[i - 1];
         }
@@ -69,47 +69,47 @@ public class GAUtils {
     }
     
     // Get the probabilities for the "selection roulette", i.e the relative fitnesess of 
-    // every individual with respect to the sum of all the fitnesses in the population
-    public double[] getRelativeFitnesses(double[] fitnesses, double accumulated_fitness) {
-        double[] rel_fitnesses = new double[fitnesses.length];
-        for (int i = 0; i < fitnesses.length; i++) {
+    // every individual with respect to the sum of all the fitness in the population
+    public double[] getRelativeFitness(double[] fitness, double accumulated_fitness) {
+        double[] rel_fitness = new double[fitness.length];
+        for (int i = 0; i < fitness.length; i++) {
             if (accumulated_fitness > 0.1) {
-                rel_fitnesses[i] = fitnesses[i]/accumulated_fitness;
+                rel_fitness[i] = fitness[i]/accumulated_fitness;
             }
             else {
-                rel_fitnesses[i] = 0.0;
+                rel_fitness[i] = 0.0;
             }
         }
-        return rel_fitnesses;
+        return rel_fitness;
     }
     
-    // Get the relative fitnesses for STA
-    public double[] getRelativeFitnessesSTA(Population population, double[] fitnesses, double[] accum_fitnesses) {
+    // Get the relative fitness for STA
+    public double[] getRelativeFitnessSTA(Population population, double[] fitness, double[] accum_fitness) {
         // Get the smoothing factor K
-        double average = accum_fitnesses[accum_fitnesses.length - 1]/population.length();
-        Individual worst_individual = getWorstIndividual(population, fitnesses);
+        double average = accum_fitness[accum_fitness.length - 1]/population.length();
+        Individual worst_individual = getWorstIndividual(population, fitness);
         double min_fitness = getFitnessOfIndividual(worst_individual);
         double k = average + min_fitness;
         
         // Add the smoothing factor K to the fitness of every individual
         for (int i = 0; i < population.length(); i++) {
-            fitnesses[i] += k;
+            fitness[i] += k;
         }
-        accum_fitnesses = getAccumulatedFitnesses(fitnesses);
+        accum_fitness = getAccumulatedFitness(fitness);
         
-        // Get the relative fitnesses of the population
-        return getRelativeFitnesses(fitnesses, accum_fitnesses[accum_fitnesses.length - 1]);   
+        // Get the relative fitness of the population
+        return getRelativeFitness(fitness, accum_fitness[accum_fitness.length - 1]);   
     }
     
     // Get the probabilities associated with each bit (gene) of a genome (STA)
-    public double[] getGenomeProbabilities(Population population, double[] relative_fitnesses) {
+    public double[] getGenomeProbabilities(Population population, double[] relative_fitness) {
         int genome_size = population.getSizeOfIndividuals();
         int population_size = population.length();
         double[] probabilities = new double[genome_size];
         for (int i = 0; i < genome_size; i++) {
             probabilities[i] = 0;
             for (int j = 0; j < population_size; j++) {
-                probabilities[i] += (relative_fitnesses[j] * population.getIndividualAtIndex(j).getGeneAtIndex(i));
+                probabilities[i] += (relative_fitness[j] * population.getIndividualAtIndex(j).getGeneAtIndex(i));
             }
         }
         return probabilities;
@@ -197,17 +197,17 @@ public class GAUtils {
     
     // Perform a roulette selection between all the individuals, where the probability of an individual to be chosen
     // is proportional to its fitness
-    public Individual rouletteSelection(Population population, double[] accum_fitnesses) {
+    public Individual rouletteSelection(Population population, double[] accum_fitness) {
         Individual[] pop = population.getPopulation();
-        double max_fitness = accum_fitnesses[accum_fitnesses.length - 1];
+        double max_fitness = accum_fitness[accum_fitness.length - 1];
         double r = Math.random();
         double c = r * max_fitness;
-        for (int i = 0; i < accum_fitnesses.length; i++) {
+        for (int i = 0; i < accum_fitness.length; i++) {
             if (i == 0) {
-                if (c > 0 && c < accum_fitnesses[0]) { return pop[i]; }
+                if (c > 0 && c < accum_fitness[0]) { return pop[i]; }
             }
             else {
-                if (c > accum_fitnesses[i-1] && c < accum_fitnesses[i]) { return pop[i]; }
+                if (c > accum_fitness[i-1] && c < accum_fitness[i]) { return pop[i]; }
             }
         }
         // If the process above didn't terminate, then all the individuals had a fitness of 0, therefore
@@ -218,31 +218,31 @@ public class GAUtils {
     }
     
     // Get the best individual in a population
-    public Individual getBestIndividual(Population population, double[] fitnesses) {
-        double max_fitness = fitnesses[0];
+    public Individual getBestIndividual(Population population, double[] fitness) {
+        double max_fitness = fitness[0];
         int chosen = 0;
-        for (int i = 0; i < fitnesses.length; i++) {
-            if (max_fitness < fitnesses[i]) {
-                max_fitness = fitnesses[i];
+        for (int i = 0; i < fitness.length; i++) {
+            if (max_fitness < fitness[i]) {
+                max_fitness = fitness[i];
                 chosen = i;
             }
         }
         
         // If the max fitness in the population is 0, choose an individual randomly
         if (max_fitness < 0.1) {
-            chosen = (int) (Math.random() * fitnesses.length);
+            chosen = (int) (Math.random() * fitness.length);
         }
         
         return population.getIndividualAtIndex(chosen);
     }
     
     // Get the worst individual in a population
-    public Individual getWorstIndividual(Population population, double[] fitnesses) {
-        double min_fitness = fitnesses[0];
+    public Individual getWorstIndividual(Population population, double[] fitness) {
+        double min_fitness = fitness[0];
         int chosen = 0;
-        for (int i = 0; i < fitnesses.length; i++) {
-            if (min_fitness > fitnesses[i]) {
-                min_fitness = fitnesses[i];
+        for (int i = 0; i < fitness.length; i++) {
+            if (min_fitness > fitness[i]) {
+                min_fitness = fitness[i];
                 chosen = i;
             }
         }

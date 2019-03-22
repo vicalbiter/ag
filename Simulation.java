@@ -50,9 +50,9 @@ public class Simulation {
         int cat = 50;
         String results = new String();
         Simulation sim = new Simulation();
-        results = sim.simulateSGA(n_sims, 70, 64, 500, 0.9, 0.05);
+        //results = sim.simulateSGA(n_sims, 70, 64, 500, 0.9, 0.05);
         //results = sim.simulateTGA(n_sims, 70, 64, 500, 0.9, 0.05);
-        //results = sim.simulateSTA(n_sims, 70, 64, 500, 0.05);
+        results = sim.simulateSTA(n_sims, 70, 64, 500, 0.005);
         //results = sim.simulateCHC(n_sims, 70, 64, 500, cat);
         //results = sim.simulateEGA(n_sims, 70, 64, 500, 0.9, 0.05);
         System.out.print(results);
