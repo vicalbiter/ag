@@ -7,6 +7,10 @@ import java.math.BigInteger;
 
 public class GAUtils {
 
+    /***************************************************
+      * Generation of Individuals/Populations
+    ****************************************************/
+    
     // Generate a random individual of size "size"
     public Individual generateIndividual(int size) {
         String ind = new String();
@@ -31,18 +35,27 @@ public class GAUtils {
         return new Population(population);
     }
     
-    // Generate a random population of "n" floating point numbers
-    public Population generateFloatNumPopulation(int n, double min, double max) {
-        float range = (float) (max - min);
-        Individual[] population = new Individual[n];
+    // Generate an individual whose genome is the concatenation of "n" floating point numbers
+    // in their 32-bit binary representation
+    public Individual generateNNIndividual(int n, double min, double max) {
+        String ind = "";
         for (int i = 0; i < n; i++) {
-            float random = (float) ((Math.random()*range) + min);
-            population[i] = new Individual(floatToBinaryString(random));
-            System.out.println(random);
-            System.out.println(population[i]);
+            ind += floatToBinaryString(generateRandomFloatNumber(min, max));
         }
-        return new Population(population);
+        return new Individual(ind);
     }
+    
+    // Generate a random floating point number between min and max
+    public float generateRandomFloatNumber(double min, double max) {
+        float range = (float) (max - min);
+        float random = (float) ((Math.random()*range) + min);
+        return random;
+    }
+    
+    
+    /***************************************************
+      * Calculation of the fitness of an Individual/Population
+    ****************************************************/
     
     // Get the fitness of an individual, according to the following royal function
     // f(x) = <<Equation given in the first partial exam' specifications>>
@@ -59,6 +72,13 @@ public class GAUtils {
             }
         }
         return fitness;
+    }
+    
+    // Get the fitness of a NN-individual
+    public double getNNFitnessOfIndividual(Individual ind, double[] features, double [] labels) {
+        //NN nn = new NN(ind);
+        //return (1 / nn.calculateError(features, labels));
+        return 0.0;
     }
     
     // Get the fitness of all the individuals inside a population
@@ -114,6 +134,10 @@ public class GAUtils {
         // Get the relative fitness of the population
         return getRelativeFitness(fitness, accum_fitness[accum_fitness.length - 1]);   
     }
+    
+    /***************************************************
+      * Crossover functions
+    ****************************************************/
     
     // Get the probabilities associated with each bit (gene) of a genome (STA)
     public double[] getGenomeProbabilities(Population population, double[] relative_fitness) {
@@ -209,6 +233,10 @@ public class GAUtils {
         return 0;
     }
     
+    /***************************************************
+      * Selection functions
+    ****************************************************/
+    
     // Perform a roulette selection between all the individuals, where the probability of an individual to be chosen
     // is proportional to its fitness
     public Individual rouletteSelection(Population population, double[] accum_fitness) {
@@ -264,6 +292,9 @@ public class GAUtils {
         return population.getIndividualAtIndex(chosen);
     }
     
+    /***************************************************
+      * Miscelaneous functions
+    ****************************************************/
         
     // Convert a 32 bit string to a floating point number
     public float binaryStringToFloat(String str) {
@@ -277,6 +308,22 @@ public class GAUtils {
         return String.format("%32s", Integer.toBinaryString(intBits)).replace(" ","0");
     }
     
+    // Convert a string of 32*n bits (n = 0, 1, 2...) to an array of n floating point numbers
+    public float[] binaryStringToFloatArray(String str) {
+        int size = str.length()/32;
+        float[] arr = new float[size];
+        int k = 0;
+        for (int i = 0; i < size; i++) {
+            String substr = str.substring(k, k + 32);
+            arr[i] = binaryStringToFloat(substr);
+            System.out.println(arr[i]);
+            //System.out.println(substr);
+            k = k + 32;
+        }
+        return arr;
+    }
+    
+    // Test client
     public static void main(String[] args) {
         GAUtils utils = new GAUtils();
         //Population population = utils.generatePopulation(2, 10);
@@ -288,7 +335,9 @@ public class GAUtils {
         System.out.println(offs[0]);
         System.out.println(offs[1]);
         */
-        utils.generateFloatNumPopulation(10, -0.1, 0.1);
+        Individual ind = utils.generateNNIndividual(4, -0.1, 0.1);
+        System.out.println(ind);
+        utils.binaryStringToFloatArray(ind.toString());
     }
     
 }
