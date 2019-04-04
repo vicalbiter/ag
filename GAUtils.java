@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Collections;
+import java.math.BigInteger;
 
 public class GAUtils {
 
@@ -26,6 +27,19 @@ public class GAUtils {
         Individual[] population = new Individual[n];
         for (int i = 0; i < n; i++) {
             population[i] = generateIndividual(size);
+        }
+        return new Population(population);
+    }
+    
+    // Generate a random population of "n" floating point numbers
+    public Population generateFloatNumPopulation(int n, double min, double max) {
+        float range = (float) (max - min);
+        Individual[] population = new Individual[n];
+        for (int i = 0; i < n; i++) {
+            float random = (float) ((Math.random()*range) + min);
+            population[i] = new Individual(floatToBinaryString(random));
+            System.out.println(random);
+            System.out.println(population[i]);
         }
         return new Population(population);
     }
@@ -250,15 +264,31 @@ public class GAUtils {
         return population.getIndividualAtIndex(chosen);
     }
     
+        
+    // Convert a 32 bit string to a floating point number
+    public float binaryStringToFloat(String str) {
+        int indInt = new BigInteger(str, 2).intValue();
+        return Float.intBitsToFloat(indInt);    
+    }
+    
+    // Convert a floating point number to its 32-binary string representation
+    public String floatToBinaryString(float flo) {
+        int intBits = Float.floatToIntBits(flo);
+        return String.format("%32s", Integer.toBinaryString(intBits)).replace(" ","0");
+    }
+    
     public static void main(String[] args) {
         GAUtils utils = new GAUtils();
-        Population population = utils.generatePopulation(2, 10);
+        //Population population = utils.generatePopulation(2, 10);
+        /*
         for (Individual s : population.getPopulation()) {
             System.out.println(s);
         }
         Individual[] offs = utils.huxCrossover(population.getIndividualAtIndex(0), population.getIndividualAtIndex(1));
         System.out.println(offs[0]);
         System.out.println(offs[1]);
+        */
+        utils.generateFloatNumPopulation(10, -0.1, 0.1);
     }
     
 }
