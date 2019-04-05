@@ -55,10 +55,10 @@ public class NN {
         for (int i = 0; i < labels.length; i++) {
             float[] output = calculateOutput(input[i]);
             for (int j = 0; j < labels[0].length; j++) {
-                error += labels[i][j] - output[j];
+                error += Math.abs(labels[i][j] - output[j]);
             }
         }
-        System.out.println("Error: " + error);
+        //System.out.println("Error: " + error);
         return error;
     }
     
@@ -77,19 +77,32 @@ public class NN {
             for (int i = 0; i < this.sizeHL; i++) {
                 output[j] += (float) (hl[i] * this.weightsHL[i][j]);
             }
-            System.out.println("Output " + j + ": " + output[j]);
+            //System.out.println("Output " + j + ": " + output[j]);
         }
         return output;
     }
     
-    public float predict(double[] input) {
-        return 0;
+    public int predict(double[] input) {
+        float[] prediction = new float[this.sizeOL];
+        prediction = calculateOutput(input);
+        for (float f : prediction) {
+            System.out.print(f + " ");
+        }
+        float max = 0;
+        int index_prediction = 0;
+        for (int i = 0; i < prediction.length; i++) {
+            if (prediction[i] > max) {
+                max = prediction[i];
+                index_prediction = i;
+            }
+        }
+        return index_prediction;
     }
     
     public static void main(String[] args) {
         GAUtils utils = new GAUtils();
         Individual ind = utils.generateNNIndividual(8, -0.1, 0.1);
-        System.out.println(ind);
+        //System.out.println(ind);
         NN nn = new NN(3, 2, 1, utils.binaryStringToFloatArray(ind.toString()));
         double[][] input = {{0.5, 1.0, 0.1},{0.5, 1.0, 0.1}};
         double[][] labels = {{1.0},{1.0}};

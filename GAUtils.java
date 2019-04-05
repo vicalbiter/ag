@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Collections;
 import java.math.BigInteger;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class GAUtils {
 
@@ -52,10 +55,10 @@ public class GAUtils {
         return random;
     }
     
-    public Population generateNNPopulation(int n, double min, double max) {
+    public Population generateNNPopulation(int n, int nn_size, double min, double max) {
         Individual[] population = new Individual[n];
         for (int i = 0; i < n; i++) {
-            population[i] = generateNNIndividual(n, min, max);
+            population[i] = generateNNIndividual(nn_size, min, max);
         }
         return new Population(population);
     }
@@ -86,7 +89,19 @@ public class GAUtils {
     public double getNNFitnessOfIndividual(Individual ind, int sFL, int sHL, int sOL, double[][] input, double [][] lab) {
         float weights[] = binaryStringToFloatArray(ind.toString());
         NN nn = new NN(sFL, sHL, sOL, weights);
-        return (1.0 / (nn.calculateBatchError(input, lab)));
+        double fitness = 1.0 / nn.calculateBatchError(input, lab);
+        //System.out.println(fitness);
+        return fitness;
+    }
+    
+    public double[] getNNFitnessOfPopulation(Population population, int sFL, int sHL, int sOL, double[][] input, double[][] lab) {
+        double[] fitness = new double[population.length()];
+        int length = population.length();
+        for (int i = 0; i < length; i++) {
+            double current_fitness = getNNFitnessOfIndividual(population.getIndividualAtIndex(i), sFL, sHL, sOL, input, lab);
+            fitness[i] = current_fitness;
+        }
+        return fitness;
     }
     
     // Get the fitness of all the individuals inside a population
@@ -331,8 +346,50 @@ public class GAUtils {
         return arr;
     }
     
+    // Read training data from a CSV
+    public double[][] readTrainingData(String filename, int numfields, int samples) throws FileNotFoundException {
+        double[][] data = new double[samples][numfields];
+        Scanner scanner = new Scanner(new File(filename));
+        scanner.useDelimiter(",");
+        int i = 0;
+        int j = 0;
+        while (scanner.hasNext()) {
+            String line = scanner.nextLine();
+            String[] arr = line.split(",");
+            for (String s : arr) {
+                data[i][j] = Float.valueOf(s);
+                j++;
+                if (j == numfields) { j = 0; }
+            }
+            i++;
+        }
+        return data;
+    }
+    
+    // Get features matrix
+    public double[][] getFeatures(double[][] data, int numfeatures) {
+        double[][] features = new double[data.length][numfeatures];
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < numfeatures; j++) {
+                features[i][j] = data[i][j];
+            }
+        }
+        return features;
+    }
+    
+    // Get labels matrix
+    public double[][] getLabels(double[][] data, int numlabels) {
+        double[][] features = new double[data.length][numlabels];
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < numlabels; j++) {
+                features[i][j] = data[i][j + data[0].length - numlabels];
+            }
+        }
+        return features;
+    }
+    
     // Test client
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         GAUtils utils = new GAUtils();
         //Population population = utils.generatePopulation(2, 10);
         /*
@@ -344,8 +401,22 @@ public class GAUtils {
         System.out.println(offs[1]);
         */
         Individual ind = utils.generateNNIndividual(4, -0.1, 0.1);
-        System.out.println(ind);
+        //System.out.println(ind);
         utils.binaryStringToFloatArray(ind.toString());
+        double[][] data = utils.readTrainingData("mlptrain.csv", 16, 160);
+        for (double f : data[159]) {
+            //System.out.print(f + " ");
+        }
+        //System.out.println();
+        double[][] features = utils.getFeatures(data, 13);
+        for (double f : features[159]) {
+            //System.out.print(f + " ");
+        }
+        //System.out.println();
+        double[][] labels = utils.getLabels(data, 3);
+        for (double f : labels[159]) {
+            //System.out.print(f + " ");
+        }
     }
     
 }

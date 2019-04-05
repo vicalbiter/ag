@@ -2,14 +2,23 @@ import java.util.List;
 import java.util.Collections;
 import java.util.PriorityQueue;
 import java.util.Arrays;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class CHCNN {
 
-    private Individual best_individual;
-    private double best_fitness;
+    private int NN_SIZE = 128;
+    private double MIN = -0.0001;
+    private double MAX = 0.0001;
+    public int SFL = 13;
+    public int SHL = 8;
+    public int SOL = 3;
+    public Individual best_individual;
+    public double best_fitness;
     
     // Class constructor
-    public CHCNN(int n, int l, int g, int cat) {
+    public CHCNN(int n, int g, double[][] input, double[][] labels, int cat) {
         GAUtils utils = new GAUtils();
         Individual[] population_buffer = new Individual[n];
         Individual[] offspring_buffer = new Individual[2];
@@ -18,13 +27,13 @@ public class CHCNN {
         int cataclism_counter = 0;
         
         // Initialize the population
-        Population population = utils.generatePopulation(n, l);
-        double[] fitness = utils.getFitnessOfPopulation(population);
+        Population population = utils.generateNNPopulation(n, NN_SIZE, MIN, MAX);
+        double[] fitness = utils.getNNFitnessOfPopulation(population, SFL, SHL, SOL, input, labels);
         
         // Store the information about the current and previous generation's best individuals, in order to keep
         // track of when to perform a "restart" (i.e. a cataclism)
         Individual temp_individual = utils.getBestIndividual(population, fitness);
-        double temp_fitness = utils.getFitnessOfIndividual(temp_individual);
+        double temp_fitness = utils.getNNFitnessOfIndividual(temp_individual, SFL, SHL, SOL, input, labels);
         CIndividual previous_best = new CIndividual(temp_individual, temp_fitness);
         CIndividual current_best = new CIndividual(temp_individual, temp_fitness);
         
@@ -32,7 +41,7 @@ public class CHCNN {
         // their natural order
         for (int i = 0; i < n; i++) {
             Individual current_individual = population.getIndividualAtIndex(i);
-            double current_fitness = utils.getFitnessOfIndividual(current_individual);
+            double current_fitness = utils.getNNFitnessOfIndividual(current_individual, SFL, SHL, SOL, input, labels);
             cpopulation[i] = new CIndividual(current_individual, current_fitness);
             pq.add(new CIndividual(current_individual, current_fitness));
         }
@@ -59,9 +68,9 @@ public class CHCNN {
                 // Perform a HUX crossover between the chosen invidivuals
                 offspring_buffer = utils.huxCrossover(one.ind, two.ind);
                 new_one = offspring_buffer[0];
-                new_one_fitness = utils.getFitnessOfIndividual(new_one);
+                new_one_fitness = utils.getNNFitnessOfIndividual(new_one, SFL, SHL, SOL, input, labels);
                 new_two = offspring_buffer[1];
-                new_two_fitness = utils.getFitnessOfIndividual(new_two);
+                new_two_fitness = utils.getNNFitnessOfIndividual(new_two, SFL, SHL, SOL, input, labels);
                 
                 
                 // Add the offspring into the priority queue if their fitness is better than the current worst's
@@ -84,12 +93,12 @@ public class CHCNN {
                 k++;
             }
             population = new Population(population_buffer);
-            fitness = utils.getFitnessOfPopulation(population);
+            fitness = utils.getNNFitnessOfPopulation(population, SFL, SHL, SOL, input, labels);
             
             // Keep track of the cataclism counter; reset if the current generation's best individual outperformed the
             // previous generation's best individual
             temp_individual = utils.getBestIndividual(population, fitness);
-            temp_fitness = utils.getFitnessOfIndividual(temp_individual);
+            temp_fitness = utils.getNNFitnessOfIndividual(temp_individual, SFL, SHL, SOL, input, labels);
             current_best = new CIndividual(temp_individual, temp_fitness);
             if (current_best.fitness > previous_best.fitness) {
                 cataclism_counter = 0;
@@ -104,7 +113,7 @@ public class CHCNN {
                     pq.add(current_best);
                     for (int j = 1; j < population.length(); j++) {
                         Individual current_individual = current_best.ind.mutate(0.35);
-                        double current_fitness = utils.getFitnessOfIndividual(current_individual);
+                        double current_fitness = utils.getNNFitnessOfIndividual(current_individual, SFL, SHL, SOL, input, labels);
                         population_buffer[j] = current_individual;
                         cpopulation[j] = new CIndividual(current_individual, current_fitness);
                         pq.add(new CIndividual(current_individual, current_fitness));
@@ -116,16 +125,16 @@ public class CHCNN {
             
         }
         
-        fitness = utils.getFitnessOfPopulation(population);
+        fitness = utils.getNNFitnessOfPopulation(population, SFL, SHL, SOL, input, labels);
         
         // Print out the best individual
-        //System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
+        System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
         Individual best = utils.getBestIndividual(population, fitness);
-        //System.out.println(best);
-        //System.out.println("Fitness: " + utils.getFitnessOfIndividual(best));
+        System.out.println(best);
+        System.out.println("Fitness: " + utils.getNNFitnessOfIndividual(best, SFL, SHL, SOL, input, labels));
         
         this.best_individual = best;
-        this.best_fitness = utils.getFitnessOfIndividual(best);
+        this.best_fitness = utils.getNNFitnessOfIndividual(best, SFL, SHL, SOL, input, labels);;
     }
     
     public Individual getBestIndividual() {
@@ -136,7 +145,18 @@ public class CHCNN {
         return this.best_fitness;
     }
     
-    public static void main(String[] args) {
-        CHC chc = new CHC(70, 64, 500, 50);
+    public static void main(String[] args) throws FileNotFoundException {
+        GAUtils utils = new GAUtils();
+        double[][] data = utils.readTrainingData("mlptrain.csv", 16, 160);
+        double[][] input = utils.getFeatures(data, 13);
+        double[][] labels = utils.getLabels(data, 3);
+        CHCNN chc = new CHCNN(20, 100, input, labels, 50);
+        
+        float[] weights = utils.binaryStringToFloatArray(chc.best_individual.toString());
+        NN nn = new NN(chc.SFL, chc.SHL, chc.SOL, weights);
+        //nn.printFLWeights();
+        //nn.printHLWeights();
+        
+        System.out.println(nn.predict(input[0]));
     }
 }
