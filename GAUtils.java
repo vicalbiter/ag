@@ -52,6 +52,14 @@ public class GAUtils {
         return random;
     }
     
+    public Population generateNNPopulation(int n, double min, double max) {
+        Individual[] population = new Individual[n];
+        for (int i = 0; i < n; i++) {
+            population[i] = generateNNIndividual(n, min, max);
+        }
+        return new Population(population);
+    }
+    
     
     /***************************************************
       * Calculation of the fitness of an Individual/Population
@@ -75,10 +83,10 @@ public class GAUtils {
     }
     
     // Get the fitness of a NN-individual
-    public double getNNFitnessOfIndividual(Individual ind, double[] features, double [] labels) {
-        //NN nn = new NN(ind);
-        //return (1 / nn.calculateError(features, labels));
-        return 0.0;
+    public double getNNFitnessOfIndividual(Individual ind, int sFL, int sHL, int sOL, double[][] input, double [][] lab) {
+        float weights[] = binaryStringToFloatArray(ind.toString());
+        NN nn = new NN(sFL, sHL, sOL, weights);
+        return (1.0 / (nn.calculateBatchError(input, lab)));
     }
     
     // Get the fitness of all the individuals inside a population
@@ -316,7 +324,7 @@ public class GAUtils {
         for (int i = 0; i < size; i++) {
             String substr = str.substring(k, k + 32);
             arr[i] = binaryStringToFloat(substr);
-            System.out.println(arr[i]);
+            //System.out.println(arr[i]);
             //System.out.println(substr);
             k = k + 32;
         }

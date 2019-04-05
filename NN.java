@@ -7,9 +7,6 @@ public class NN {
     int sizeOL;
     float[][] weightsFL;
     float[][] weightsHL;
-    float[] input;
-    float[] hl;
-    float[] output;
     
     public NN(int sizeFL, int sizeHL, int sizeOL, float[] weights) {
         this.sizeFL = sizeFL;
@@ -53,13 +50,36 @@ public class NN {
         }
     }
     
-    public float calculateBatchError(double[] input, double[] labels) {
-        float[] output = calculateOutput(input);
-        return 0;
+    public double calculateBatchError(double[][] input, double[][] labels) {
+        double error = 0.0;
+        for (int i = 0; i < labels.length; i++) {
+            float[] output = calculateOutput(input[i]);
+            for (int j = 0; j < labels[0].length; j++) {
+                error += labels[i][j] - output[j];
+            }
+        }
+        System.out.println("Error: " + error);
+        return error;
     }
     
     public float[] calculateOutput(double[] input) {
-        return null;
+        float[] hl = new float[this.sizeHL];
+        float[] output = new float[this.sizeOL];
+        //System.out.println("Middle layer:");
+        for (int j = 0; j < this.sizeHL; j++) {
+            for (int i = 0; i < this.sizeFL; i++) {
+                hl[j] += (float) (input[i] * this.weightsFL[i][j]);
+            }
+            //System.out.println(hl[j]);
+        }
+        //System.out.println("Output layer:");
+        for (int j = 0; j < this.sizeOL; j++) {
+            for (int i = 0; i < this.sizeHL; i++) {
+                output[j] += (float) (hl[i] * this.weightsHL[i][j]);
+            }
+            System.out.println("Output " + j + ": " + output[j]);
+        }
+        return output;
     }
     
     public float predict(double[] input) {
@@ -71,7 +91,12 @@ public class NN {
         Individual ind = utils.generateNNIndividual(8, -0.1, 0.1);
         System.out.println(ind);
         NN nn = new NN(3, 2, 1, utils.binaryStringToFloatArray(ind.toString()));
-        nn.printFLWeights();
-        nn.printHLWeights();
+        double[][] input = {{0.5, 1.0, 0.1},{0.5, 1.0, 0.1}};
+        double[][] labels = {{1.0},{1.0}};
+        //nn.printFLWeights();
+        //nn.printHLWeights();
+        //nn.calculateOutput(input[0]);
+        //System.out.println(labels.length);
+        nn.calculateBatchError(input, labels);
     }
 }
