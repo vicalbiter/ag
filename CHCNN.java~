@@ -8,11 +8,11 @@ import java.util.Scanner;
 
 public class CHCNN {
 
-    private int NN_SIZE = 68;
+    private int NN_SIZE = 128;
     private double MIN = -0.0001;
     private double MAX = 0.0001;
-    public int SFL = 14;
-    public int SHL = 4;
+    public int SFL = 13;
+    public int SHL = 8;
     public int SOL = 3;
     public Individual best_individual;
     public double best_fitness;
@@ -64,9 +64,6 @@ public class CHCNN {
                 double new_one_fitness;
                 Individual new_two;
                 double new_two_fitness;
-                
-                //System.out.println(one.ind);
-                //System.out.println(two.ind);
                 
                 // Perform a HUX crossover between the chosen invidivuals
                 offspring_buffer = utils.huxCrossover(one.ind, two.ind);
@@ -153,15 +150,13 @@ public class CHCNN {
         double[][] data = utils.readTrainingData("mlptrain.csv", 16, 160);
         double[][] input = utils.getFeatures(data, 13);
         double[][] labels = utils.getLabels(data, 3);
-        CHCNN chc = new CHCNN(70, 500, input, labels, 50);
+        CHCNN chc = new CHCNN(20, 100, input, labels, 50);
         
         float[] weights = utils.binaryStringToFloatArray(chc.best_individual.toString());
         NN nn = new NN(chc.SFL, chc.SHL, chc.SOL, weights);
         //nn.printFLWeights();
         //nn.printHLWeights();
-         
-        for (int i = 0; i < 160; i++) {
-            System.out.println(nn.predict(input[i]));
-        }
+        
+        System.out.println(nn.predict(input[0]));
     }
 }

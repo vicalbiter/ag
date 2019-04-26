@@ -1,0 +1,9 @@
+public class Simulation {
+ 
+    public void simulateSGA(int n_sims, int n, int l, int g, double pc, double pm) {
+        for (int i = 0; i < n_sims; i++) {
+            SGA sga = new SGA(n, l, g, pc, pm);
+        }
+    }
+    
+}

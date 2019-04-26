@@ -63,30 +63,21 @@ public class NN {
     }
     
     public float[] calculateOutput(double[] input) {
-        double[] hl = new double[this.sizeHL];
+        float[] hl = new float[this.sizeHL];
         float[] output = new float[this.sizeOL];
-        double[] tinput= addThreshold(input);
         //System.out.println("Middle layer:");
         for (int j = 0; j < this.sizeHL; j++) {
             for (int i = 0; i < this.sizeFL; i++) {
-                hl[j] += (float) (tinput[i] * this.weightsFL[i][j]);
+                hl[j] += (float) (input[i] * this.weightsFL[i][j]);
             }
             //System.out.println(hl[j]);
         }
-        // Calculate the sigmoid of every output in the HL
-        for (int i = 0; i < hl.length; i++) {
-            hl[i] = (float) (1.0 / (1.0 + Math.exp(-1.0 * hl[i])));
-        }
-        double[] thl = addThreshold(hl);
         //System.out.println("Output layer:");
         for (int j = 0; j < this.sizeOL; j++) {
             for (int i = 0; i < this.sizeHL; i++) {
-                output[j] += (float) (thl[i] * this.weightsHL[i][j]);
+                output[j] += (float) (hl[i] * this.weightsHL[i][j]);
             }
             //System.out.println("Output " + j + ": " + output[j]);
-        }
-        for (int i = 0; i < output.length; i++) {
-            output[i] = (float) (1.0 / (1.0 + Math.exp(-1.0 * output[i])));
         }
         return output;
     }
@@ -106,19 +97,6 @@ public class NN {
             }
         }
         return index_prediction;
-    }
-    
-    public double[] addThreshold(double[] input) {
-        double[] newinput = new double[input.length + 1];
-        for (int i = 0; i < input.length + 1; i++) {
-            if (i == 0) {
-                newinput[i] = 1;
-            }
-            else {
-                newinput[i] = input[i - 1];
-            }
-        }
-        return newinput;
     }
     
     public static void main(String[] args) {
