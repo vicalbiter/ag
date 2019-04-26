@@ -9,8 +9,8 @@ import java.util.Scanner;
 public class CHCNN {
 
     private int NN_SIZE = 68;
-    private double MIN = -0.0001;
-    private double MAX = 0.0001;
+    private double MIN = -7.9999;
+    private double MAX = 7.9999;
     public int SFL = 14;
     public int SHL = 4;
     public int SOL = 3;
@@ -131,10 +131,10 @@ public class CHCNN {
         fitness = utils.getNNFitnessOfPopulation(population, SFL, SHL, SOL, input, labels);
         
         // Print out the best individual
-        System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
+        //System.out.println("After " + g + " generations," + " the best individual that CHC could find was:");
         Individual best = utils.getBestIndividual(population, fitness);
-        System.out.println(best);
-        System.out.println("Fitness: " + utils.getNNFitnessOfIndividual(best, SFL, SHL, SOL, input, labels));
+        //System.out.println(best);
+        //System.out.println("Fitness: " + utils.getNNFitnessOfIndividual(best, SFL, SHL, SOL, input, labels));
         
         this.best_individual = best;
         this.best_fitness = utils.getNNFitnessOfIndividual(best, SFL, SHL, SOL, input, labels);;
@@ -153,15 +153,17 @@ public class CHCNN {
         double[][] data = utils.readTrainingData("mlptrain.csv", 16, 160);
         double[][] input = utils.getFeatures(data, 13);
         double[][] labels = utils.getLabels(data, 3);
-        CHCNN chc = new CHCNN(70, 500, input, labels, 50);
+        CHCNN chc = new CHCNN(70, 100, input, labels, 50);
         
         float[] weights = utils.binaryStringToFloatArray(chc.best_individual.toString());
         NN nn = new NN(chc.SFL, chc.SHL, chc.SOL, weights);
         //nn.printFLWeights();
         //nn.printHLWeights();
          
-        for (int i = 0; i < 160; i++) {
-            System.out.println(nn.predict(input[i]));
-        }
+        //for (int i = 0; i < 160; i++) {
+        //    System.out.println(nn.predict(input[i]));
+        //}
+        
+        nn.printCorrectPredictions(input, labels);
     }
 }

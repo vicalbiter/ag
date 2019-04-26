@@ -55,11 +55,11 @@ public class NN {
         for (int i = 0; i < labels.length; i++) {
             float[] output = calculateOutput(input[i]);
             for (int j = 0; j < labels[0].length; j++) {
-                error += Math.abs(labels[i][j] - output[j]);
+                error += Math.pow(labels[i][j] - output[j], 2);
             }
         }
         //System.out.println("Error: " + error);
-        return error;
+        return error / labels.length;
     }
     
     public float[] calculateOutput(double[] input) {
@@ -91,12 +91,43 @@ public class NN {
         return output;
     }
     
+    public void printCorrectPredictions(double[][] input, double[][] labels) {
+        System.out.println("Number of correct predictions:" + getCorrectPredictions(input, labels) + "/" + labels.length);
+    }
+    
+    public int getCorrectPredictions(double[][] input, double[][] labels) {
+        int[] predictions = new int[labels.length];
+        
+        // Get 1-dimension label matrix
+        int[] y = new int[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            if (labels[i][0] == 1) { y[i] = 0; }
+            else if (labels[i][1] == 1) { y[i] = 1; }
+            else { y[i] = 2; }
+        }
+        
+        // Get predictions
+        for (int i = 0; i < input.length; i++) {
+            predictions[i] = predict(input[i]);
+        }
+        
+        // Count correct predictions
+        int count = 0;
+        int total = y.length;
+        for (int i = 0; i < y.length; i++) {  
+            if (y[i] == predictions[i]) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
     public int predict(double[] input) {
         float[] prediction = new float[this.sizeOL];
         prediction = calculateOutput(input);
-        for (float f : prediction) {
-            System.out.print(f + " ");
-        }
+        //for (float f : prediction) {
+        //    System.out.print(f + " ");
+        //}
         float max = 0;
         int index_prediction = 0;
         for (int i = 0; i < prediction.length; i++) {
