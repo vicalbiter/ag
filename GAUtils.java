@@ -64,6 +64,27 @@ public class GAUtils {
         return new Population(population);
     }
     
+    // Generate a random integer-individual with n alleles, with genome size "size"
+    public Individual generateIntegerIndividual(int n, int size) {
+        String ind = new String();
+        for (int i = 0; i < size; i++) {
+            double random = Math.random() * n + 1;
+            ind += (int) random;
+        }
+        Individual individual = new Individual(ind);
+        individual.setAlleles(n);
+        return individual;
+    }
+    
+    // Generate a random population of "n" individuals with "a" alleles, each with genome size "size"
+    public Population generateIntegerPopulation(int n, int a, int size) {
+        Individual[] population = new Individual[n];
+        for (int i = 0; i < n; i++) {
+            population[i] = generateIntegerIndividual(a, size);
+        }
+        return new Population(population);
+    }
+    
     
     /***************************************************
       * Calculation of the fitness of an Individual/Population
@@ -439,7 +460,7 @@ public class GAUtils {
         //System.out.println(offs[0]);
         //System.out.println(offs[1]);
         
-        
+        /*
         Individual ind = utils.generateNNIndividual(4, -0.001, 0.001);
         System.out.println(ind.toString().length());
         //utils.binaryStringToFloatArray(ind.toString());
@@ -459,7 +480,15 @@ public class GAUtils {
         for (double f : labels[159]) {
             //System.out.print(f + " ");
         }
+        */
         
+        Individual ind1 = utils.generateIntegerIndividual(3, 10);
+        Individual ind2 = utils.generateIntegerIndividual(3, 10);
+        System.out.println(ind1);
+        System.out.println(ind2);
+        Individual[] offspring = utils.huxCrossover(ind1, ind2);
+        System.out.println(offspring[0]);
+        System.out.println(offspring[1]);
     }
     
 }

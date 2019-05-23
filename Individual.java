@@ -2,6 +2,7 @@ public class Individual {
 
     private String ind;
     private int size;
+    private int alleles;
     
     public Individual(String ind) {
         this.ind = ind;
@@ -29,6 +30,30 @@ public class Individual {
         return new Individual(mutated);
     }
     
+    // Mutate the genome of this individual, and return a new Individual
+    public Individual mutateInteger(double prob) {
+        String mutated = new String();
+        for (int i = 0; i < this.size; i ++) {
+            double random = Math.random();
+            char current = this.ind.charAt(i);
+            if (random > prob) {
+                mutated += current;
+            }
+            else {
+                int new_allele = (int) (Math.random() * this.alleles + 1);
+                while (new_allele == (int) current) {
+                    new_allele = (int) (Math.random() * this.alleles + 1);
+                }
+                mutated += new_allele;
+            }
+        }
+        return new Individual(mutated);
+    }
+    
+    public void setAlleles(int n) {
+        this.alleles = n;
+    }
+    
     // Get the size of the individual
     public int getSize() {
         return this.size;
@@ -46,9 +71,9 @@ public class Individual {
     
     public static void main(String[] args) {
         GAUtils utils = new GAUtils();
-        Individual individual = utils.generateIndividual(5);
+        Individual individual = utils.generateIntegerIndividual(3, 10);
         System.out.println(individual);
         System.out.println(individual.getGeneAtIndex(2));
-        //System.out.println(individual.mutate(0.2));
+        System.out.println(individual.mutateInteger(0.5));
     }
 }

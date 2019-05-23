@@ -43,7 +43,8 @@ public class GAUtils {
     public Individual generateNNIndividual(int n, double min, double max) {
         String ind = "";
         for (int i = 0; i < n; i++) {
-            ind += floatToBinaryString(generateRandomFloatNumber(min, max));
+            float r = generateRandomFloatNumber(min, max);
+            ind += floatToBinaryString(r);
         }
         return new Individual(ind);
     }
@@ -89,7 +90,7 @@ public class GAUtils {
     public double getNNFitnessOfIndividual(Individual ind, int sFL, int sHL, int sOL, double[][] input, double [][] lab) {
         float weights[] = binaryStringToFloatArray(ind.toString());
         NN nn = new NN(sFL, sHL, sOL, weights);
-        double fitness = 1.0 / nn.calculateBatchError(input, lab);
+        double fitness = -1.0 * nn.calculateBatchError(input, lab);
         //System.out.println(fitness);
         return fitness;
     }
@@ -321,14 +322,41 @@ public class GAUtils {
         
     // Convert a 32 bit string to a floating point number
     public float binaryStringToFloat(String str) {
-        int indInt = new BigInteger(str, 2).intValue();
-        return Float.intBitsToFloat(indInt);    
+        char sign = str.charAt(0);
+        String left = str.substring(1, 4);
+        String right = str.substring(4, 32);
+        float intsign = 0;
+        int intpart = 0;
+        double decpart = 0;
+        if (sign == '0') { intsign = 1; }
+        else if (sign == '1') { intsign = -1; }
+        intpart = Integer.parseInt(left, 2);
+        decpart = Integer.parseInt(right, 2) / (Math.pow(2, 28) - 1);
+        float floatnumber = intsign * (float) (intpart + decpart); 
+        return floatnumber;
     }
     
     // Convert a floating point number to its 32-binary string representation
     public String floatToBinaryString(float flo) {
-        int intBits = Float.floatToIntBits(flo);
-        return String.format("%32s", Integer.toBinaryString(intBits)).replace(" ","0");
+        String stringfloat = String.format("%.28f", flo);
+        String binary = "";
+        String nosign = "";
+        if (stringfloat.charAt(0) == '-') {
+            nosign = stringfloat.substring(1);
+            binary = "1";
+        }
+        else {
+            nosign = stringfloat;
+            binary = "0";
+        }
+
+        int intpart = Integer.parseInt(nosign.substring(0,1));
+        int decpart = (int) (Double.valueOf(nosign.substring(1)) * (Math.pow(2, 28) - 1));
+        String left = String.format("%3s", Integer.toBinaryString(intpart)).replace(" ", "0");
+        String right = String.format("%28s", Integer.toBinaryString(decpart)).replace(" ", "0");
+        binary = binary + left + right;
+        return binary;
+        //return String.format("%32s", Integer.toBinaryString(intBits)).replace(" ","0");
     }
     
     // Convert a string of 32*n bits (n = 0, 1, 2...) to an array of n floating point numbers
@@ -391,18 +419,32 @@ public class GAUtils {
     // Test client
     public static void main(String[] args) throws FileNotFoundException {
         GAUtils utils = new GAUtils();
-        //Population population = utils.generatePopulation(2, 10);
+        
         /*
+        Individual ind = utils.generateIndividual(32);
+        System.out.println(ind);
+        float num = utils.binaryStringToFloat(ind.toString());
+        System.out.println(num);
+        System.out.println(utils.floatToBinaryString(num));
+        /*
+        
+        /*
+        Population population = utils.generatePopulation(2, 32);
         for (Individual s : population.getPopulation()) {
-            System.out.println(s);
+            System.out.println(s + " " + utils.binaryStringToFloat(s.toString()));
         }
-        Individual[] offs = utils.huxCrossover(population.getIndividualAtIndex(0), population.getIndividualAtIndex(1));
-        System.out.println(offs[0]);
-        System.out.println(offs[1]);
         */
-        Individual ind = utils.generateNNIndividual(4, -0.1, 0.1);
-        //System.out.println(ind);
-        utils.binaryStringToFloatArray(ind.toString());
+        
+        //Individual[] offs = utils.huxCrossover(population.getIndividualAtIndex(0), population.getIndividualAtIndex(1));
+        //System.out.println(offs[0]);
+        //System.out.println(offs[1]);
+        
+        
+        Individual ind = utils.generateNNIndividual(4, -0.001, 0.001);
+        System.out.println(ind.toString().length());
+        //utils.binaryStringToFloatArray(ind.toString());
+        
+        
         double[][] data = utils.readTrainingData("mlptrain.csv", 16, 160);
         for (double f : data[159]) {
             //System.out.print(f + " ");
@@ -417,6 +459,7 @@ public class GAUtils {
         for (double f : labels[159]) {
             //System.out.print(f + " ");
         }
+        
     }
     
 }
