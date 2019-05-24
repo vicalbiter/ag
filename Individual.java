@@ -47,11 +47,17 @@ public class Individual {
                 mutated += new_allele;
             }
         }
-        return new Individual(mutated);
+        Individual new_ind = new Individual(mutated);
+        new_ind.setAlleles(this.alleles);
+        return new_ind;
     }
     
     public void setAlleles(int n) {
         this.alleles = n;
+    }
+    
+    public int getAlleles() {
+        return this.alleles;
     }
     
     // Get the size of the individual

@@ -1,0 +1,20 @@
+public class Wines {
+    
+    private double[][] features;
+    private String labels;
+    private Cluster[] clusters;
+    
+    public Wines(double[][] features, String labels, int alleles) {
+        this.features = features;
+        this.labels = labels;
+        this.clusters = new Cluster[alleles];
+    }
+    
+    public double vnnd() {
+        return 0.0;
+    }
+    
+    public static void main(String[] args) {
+        
+    }
+}

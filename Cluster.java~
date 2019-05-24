@@ -1,0 +1,51 @@
+import java.util.ArrayDeque;
+
+public class Cluster {
+    
+    private ArrayDeque<double[]> elements;
+    
+    public Cluster() {
+        this.elements = new ArrayDeque<double[]>();
+    }
+    
+    public void addElement(double[] x) {
+        this.elements.add(x);
+    }
+    
+    public int size() {
+        return elements.size();
+    }
+    
+    public double dmin(double[] x) {
+        double min = distance(x, this.elements.peekFirst());
+        if (min == 0) {
+            min = distance(x, this.elements.peekLast());
+        }
+        for (double[] element : this.elements) {
+            double current = distance(x, element);
+            if (current < min && current != 0.0) {
+                min = current;
+            }
+        }
+        return min;
+    }
+    
+    public double distance(double[] one, double[] two) {
+        double sum = 0;
+        for (int i = 0; i < one.length; i++) {
+            sum += Math.pow(two[i] - one[i], 2);
+        }
+        return Math.sqrt(sum);
+    }
+    
+    public static void main(String[] args) {
+        Cluster cluster = new Cluster();
+        double[] one = new double[]{1.0, 1.0};
+        double[] two = new double[]{5.0, 1.0};
+        double[] three = new double[]{5.0, 2.0};
+        cluster.addElement(one);
+        cluster.addElement(two);
+        cluster.addElement(three);
+        System.out.println(cluster.dmin(three));
+    }
+}

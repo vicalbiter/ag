@@ -107,6 +107,17 @@ public class GAUtils {
         return fitness;
     }
     
+    // Get the fitness of all the individuals inside a population
+    public double[] getFitnessOfPopulation(Population population) {
+        double[] fitness = new double[population.length()];
+        int length = population.length();
+        for (int i = 0; i < length; i++) {
+            double current_fitness = getFitnessOfIndividual(population.getIndividualAtIndex(i));
+            fitness[i] = current_fitness;
+        }
+        return fitness;
+    }
+    
     // Get the fitness of a NN-individual
     public double getNNFitnessOfIndividual(Individual ind, int sFL, int sHL, int sOL, double[][] input, double [][] lab) {
         float weights[] = binaryStringToFloatArray(ind.toString());
@@ -126,17 +137,22 @@ public class GAUtils {
         return fitness;
     }
     
-    // Get the fitness of all the individuals inside a population
-    public double[] getFitnessOfPopulation(Population population) {
+    // Get the fitness of a Population of Integer-Individuals
+    public double[] getFitnessOfIntegerPopulation(Population population, double[][] features) {
         double[] fitness = new double[population.length()];
-        int length = population.length();
-        for (int i = 0; i < length; i++) {
-            double current_fitness = getFitnessOfIndividual(population.getIndividualAtIndex(i));
+        for (int i = 0; i < population.length(); i++) {
+            double current_fitness = getFitnessOfIntegerIndividual(population.getIndividualAtIndex(i), features);
             fitness[i] = current_fitness;
         }
         return fitness;
     }
     
+    // Get the fitness of an Integer-Individual
+    public double getFitnessOfIntegerIndividual(Individual ind, double[][] features) {
+        Wines wines = new Wines(features, ind.toString(), ind.getAlleles());
+        return 1.0 / wines.vnnd();
+    }
+
     // Get the accumulated fitness of a population
     public double[] getAccumulatedFitness(double[] fitness) {
         int length = fitness.length;
